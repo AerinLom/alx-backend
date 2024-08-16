@@ -3,21 +3,26 @@
 Deletion-resilient hypermedia pagination
 """
 import csv
-import math
 from typing import List, Dict
 
 
 class Server:
-    """Server class to paginate a database of popular baby names.
+    """
+    Server class to paginate a database of popular baby names.
     """
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
+        """
+        Initializes a new Server instance.
+        """
         self.__dataset = None
         self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
-        """Cached dataset"""
+        """
+        Cached dataset
+        """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
@@ -27,7 +32,9 @@ class Server:
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
-        """Dataset indexed by sorting position, starting at 0"""
+        """
+        Dataset indexed by sorting position, starting at 0
+        """
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             truncated_dataset = dataset[:1000]
@@ -42,33 +49,28 @@ class Server:
         page_size: int = 10
     ) -> Dict:
         """
-        Returns a dictionary with pagination information considering deletions
+        Retrieves info about a page from a given index and with a
+        specified size.
         """
         assert (
-            index is not None and
-            0 <= index < len(self.indexed_dataset())
-        ), (
-            "Index must be within the range of the dataset"
+            index is not None and 
+            index >= 0 and 
+            index <= max(self.indexed_dataset().keys())
         )
 
         indexed_data = self.indexed_dataset()
         page_data = []
-        current_index = index
-        collected_items = 0
+        data_count = 0
+        next_index = None
+        start = index if index is not None else 0
 
-        while (
-            collected_items < page_size
-            and current_index < len(indexed_data)
-        ):
-            item = indexed_data.get(current_index)
-            if item:
+        for i, item in indexed_data.items():
+            if i >= start and data_count < page_size:
                 page_data.append(item)
-                collected_items += 1
-            current_index += 1
-
-        next_index = (
-            current_index if current_index < len(indexed_data) else None
-        )
+                data_count += 1
+                if data_count == page_size:
+                    next_index = i + 1
+                    break
 
         return {
             "index": index,
