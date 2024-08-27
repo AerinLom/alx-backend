@@ -3,10 +3,7 @@
 Flask app with parametrized templates using gettext
 """
 from flask import Flask, render_template, request
-from flask_babel import Babel, gettext as _
-
-app = Flask(__name__)
-app.url_map.strict_slashes = False
+from flask_babel import Babel
 
 
 class Config:
@@ -18,6 +15,8 @@ class Config:
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
+app = Flask(__name__)
+app.url_map.strict_slashes = False
 app.config.from_object(Config)
 babel = Babel(app)
 
