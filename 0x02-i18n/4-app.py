@@ -34,7 +34,7 @@ def get_locale() -> str:
 
 
 @app.route('/')
-def index():
+def index() -> str:
     """
     Index page with translated text
     """

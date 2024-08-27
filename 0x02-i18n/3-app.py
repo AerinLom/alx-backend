@@ -5,9 +5,6 @@ Flask app with parametrized templates using gettext
 from flask import Flask, render_template, request
 from flask_babel import Babel, gettext as _
 
-app = Flask(__name__)
-app.url_map.strict_slashes = False
-
 
 class Config:
     """
@@ -17,7 +14,8 @@ class Config:
     BABEL_DEFAULT_LOCALE = "en"
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
-
+app = Flask(__name__)
+app.url_map.strict_slashes = False
 app.config.from_object(Config)
 babel = Babel(app)
 
@@ -31,7 +29,7 @@ def get_locale() -> str:
 
 
 @app.route('/')
-def index():
+def index() -> str:
     """
     Index page with translated text
     """
