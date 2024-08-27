@@ -50,10 +50,8 @@ def get_locale() -> str:
     """
     Determine the best match for supported languages.
     """
-    if g.user and g.user['locale']:
-        return g.user['locale']
-    locale = request.args.get('locale')
-    if locale and locale in app.config['LANGUAGES']:
+    locale = request.args.get('locale', '')
+    if locale in app.config["LANGUAGES"]:
         return locale
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
